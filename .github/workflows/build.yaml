@@ -13,21 +13,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      # - uses: actions/checkout@v1
 
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v1
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache
+      # - name: Cache Flutter dependencies
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: /opt/hostedtoolcache/flutter
+      #     key: ${{ runner.OS }}-flutter-install-cache
 
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: stable
+      # - uses: subosito/flutter-action@v1
+      #   with:
+      #     channel: stable
 
       - name: Swap android/app/src/main, decode key and properties, build app
         run: >
-          for i in {0..${${{ secrets.RESTAURANT_COUNT }}-1}} 
+          for i in {0..{{ secrets.RESTAURANT_COUNT - 1 }}} 
             do 
               cp -R "android/app/src/main${i}" android/app/src/main 
               echo "${{ secrets.KEY_PROPERTIES }}${i}" | base64 --decode > android/key.properties 
