@@ -29,22 +29,22 @@ jobs:
         # uses: webfactory/ssh-agent@v0.5.3
         # with:
         #   ssh-private-key: ${{ secrets.SSH_KEY_DB }}
-        run: |
-          for i in {1..${{ secrets.RESTAURANT_COUNT }}} \
-            do \
-              cp -R "android/app/src/main${i}" android/app/src/main \ 
-              echo "${{ secrets.KEY_PROPERTIES }}${i}" | base64 --decode > android/key.properties \
-              echo "${{ secrets.KEY_JKS }}${i}" | base64 --decode > android/key.jks \
-              cp pubspec.prod.yaml pubspec.yaml \
-              flutter pub get \
-              if [ ${{ github.ref }} = "refs/heads/main" ] \
-              then \
-                flutter build apk --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}" \
-              fi \
-              if [ ${{ github.ref }} = "refs/heads/dev" ] \
-              then \
-                flutter build apk -t lib/main.dev.dart --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}" \
-              fi \
+        run: >
+          for i in {1..${{ secrets.RESTAURANT_COUNT }}} 
+            do 
+              cp -R "android/app/src/main${i}" android/app/src/main 
+              echo "${{ secrets.KEY_PROPERTIES }}${i}" | base64 --decode > android/key.properties 
+              echo "${{ secrets.KEY_JKS }}${i}" | base64 --decode > android/key.jks
+              cp pubspec.prod.yaml pubspec.yaml
+              flutter pub get
+              if [ ${{ github.ref }} = "refs/heads/main" ]
+              then
+                flutter build apk --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
+              fi
+              if [ ${{ github.ref }} = "refs/heads/dev" ]
+              then
+                flutter build apk -t lib/main.dev.dart --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
+              fi
 
 
       # - name: Decoding android/key.properties
