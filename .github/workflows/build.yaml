@@ -30,16 +30,16 @@ jobs:
           for i in {1..${{ secrets.RESTAURANT_COUNT }}} 
             do 
               echo "${{ secrets.KEY_PROPERTIES }}[i]" | base64 --decode > android/key.properties 
-              echo "${{ secrets.KEY_JKS }}${$((i-1))}" | base64 --decode > android/key.jks
+              echo "${{ secrets.KEY_JKS }}[[i]]" | base64 --decode > android/key.jks
               cp pubspec.prod.yaml pubspec.yaml
               flutter pub get
               if [ ${{ github.ref }} = "refs/heads/main" ]
               then
-                flutter build apk --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
+                flutter build apk --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}[i]" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}[i]" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
               fi
               if [ ${{ github.ref }} = "refs/heads/dev" ]
               then
-                flutter build apk -t lib/main.dev.dart --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
+                flutter build apk -t lib/main.dev.dart --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}[i]" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}[i]" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
               fi
               done
 
