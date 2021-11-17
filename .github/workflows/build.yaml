@@ -1,0 +1,73 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v1
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache
+
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: stable
+
+      - name: Swap android/app/src/main, decode key and properties, build app
+      - uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY_DB }}
+      - run: |
+          for i in ${{ secrets.RESTAURANT_COUNT }} \
+            do \
+              cp -R "android/app/src/main${i}" android/app/src/main \ 
+              echo "${{ secrets.KEY_PROPERTIES }}${i}" | base64 --decode > android/key.properties \
+              echo "${{ secrets.KEY_JKS }}${i}" | base64 --decode > android/key.jks \
+              cp pubspec.prod.yaml pubspec.yaml \
+              flutter pub get \
+              if [ ${{ github.ref }} = "refs/heads/main" ] \
+              then \
+                flutter build apk --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}" \
+              fi \
+              if [ ${{ github.ref }} = "refs/heads/dev" ] \
+              then \
+                flutter build apk -t lib/main.dev.dart --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}" \
+              fi \
+
+
+      # - name: Decoding android/key.properties
+      #   run: echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+
+      # - name: Decoding android/key.jks
+      #   run: echo "${{ secrets.KEY_JKS }}" | base64 --decode > android/key.jks
+
+      # - uses: webfactory/ssh-agent@v0.5.3
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_KEY_DB }}
+
+      # - run: cp pubspec.prod.yaml pubspec.yaml
+
+      # - run: flutter pub get
+
+      # - run: flutter build apk --release
+      #   if: ${{ github.ref  == 'refs/heads/master' }}
+
+      # - run: flutter build apk -t lib/main.dev.dart --release
+      #   if: ${{ github.ref  == 'refs/heads/dev' }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: order.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
