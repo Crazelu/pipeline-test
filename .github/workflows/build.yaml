@@ -26,9 +26,6 @@ jobs:
           channel: stable
 
       - name: Swap android/app/src/main, decode key and properties, build app
-        # uses: webfactory/ssh-agent@v0.5.3
-        # with:
-        #   ssh-private-key: ${{ secrets.SSH_KEY_DB }}
         run: >
           for i in {1..${{ secrets.RESTAURANT_COUNT }}} 
             do 
@@ -46,27 +43,6 @@ jobs:
                 flutter build apk -t lib/main.dev.dart --release --dart-define=restaurantId="${{ secrets.RESTAURANT_IDS }}${i}" --dart-define=restaurantName="${{ secrets.RESTAURANT_NAMES }}${i}" --dart-define=endpoint="${{ secrets.GRAPHQL_ENDPOINT }}"
               fi
               done
-
-
-      # - name: Decoding android/key.properties
-      #   run: echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
-
-      # - name: Decoding android/key.jks
-      #   run: echo "${{ secrets.KEY_JKS }}" | base64 --decode > android/key.jks
-
-      # - uses: webfactory/ssh-agent@v0.5.3
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_KEY_DB }}
-
-      # - run: cp pubspec.prod.yaml pubspec.yaml
-
-      # - run: flutter pub get
-
-      # - run: flutter build apk --release
-      #   if: ${{ github.ref  == 'refs/heads/master' }}
-
-      # - run: flutter build apk -t lib/main.dev.dart --release
-      #   if: ${{ github.ref  == 'refs/heads/dev' }}
 
       - uses: actions/upload-artifact@v2
         with:
