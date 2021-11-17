@@ -26,9 +26,9 @@ jobs:
           channel: stable
 
       - name: Swap android/app/src/main, decode key and properties, build app
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY_DB }}
+        # uses: webfactory/ssh-agent@v0.5.3
+        # with:
+        #   ssh-private-key: ${{ secrets.SSH_KEY_DB }}
         run: |
           for i in ${{ secrets.RESTAURANT_COUNT }} \
             do \
