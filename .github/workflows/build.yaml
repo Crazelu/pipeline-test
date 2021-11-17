@@ -31,7 +31,7 @@ jobs:
             do 
               cp -R android/app/src/main${i} android/app/src/main 
               echo "${{ secrets.KEY_PROPERTIES }}[i]" | base64 --decode > android/key.properties 
-              echo "${{ secrets.KEY_JKS }}[[i]]" | base64 --decode > android/key.jks
+              echo "${{ secrets.KEY_JKS }}[i]" | base64 --decode > android/key.jks
               cp pubspec.prod.yaml pubspec.yaml
               flutter pub get
               if [ ${{ github.ref }} = "refs/heads/main" ]
