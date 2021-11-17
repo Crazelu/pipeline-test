@@ -27,7 +27,7 @@ jobs:
 
       - name: Swap android/app/src/main, decode key and properties, build app
         run: >
-          for i in {0..$((${{ secrets.RESTAURANT_COUNT }}-1))} 
+          for i in {0..$((${{ secrets.RESTAURANT_COUNT }} - 1))} 
             do 
               cp -R "android/app/src/main${i}" android/app/src/main 
               echo "${{ secrets.KEY_PROPERTIES }}${i}" | base64 --decode > android/key.properties 
