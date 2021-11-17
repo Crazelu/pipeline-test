@@ -30,7 +30,7 @@ jobs:
         # with:
         #   ssh-private-key: ${{ secrets.SSH_KEY_DB }}
         run: |
-          for i in ${{ secrets.RESTAURANT_COUNT }} \
+          for i in {1..${{ secrets.RESTAURANT_COUNT }}} \
             do \
               cp -R "android/app/src/main${i}" android/app/src/main \ 
               echo "${{ secrets.KEY_PROPERTIES }}${i}" | base64 --decode > android/key.properties \
